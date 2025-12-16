@@ -1,0 +1,221 @@
+<script>
+function addField() {
+    var fnInput = document.getElementById("fieldname");
+    var fn = fnInput.value;
+
+    if (fn === "") {
+        alert("Please enter a field name.");
+        fnInput.focus();
+        return;
+    }
+
+    var ftype = document.getElementById("fieldtype").value;
+    var container = document.getElementById("regContainer");
+
+    var table = document.createElement("table");
+    var row = document.createElement("tr");
+
+    var td1 = document.createElement("td");
+    td1.innerHTML = fn + ":";
+
+    var td2 = document.createElement("td");
+
+    var idName = fn.toLowerCase().split(" ").join("_");
+
+    if (ftype === "text" || ftype === "number" || ftype === "date" ||
+        ftype === "file" || ftype === "password" || ftype === "email") {
+        var input = document.createElement("input");
+        input.type = ftype;
+        input.id = idName;
+        input.name = idName;
+        td2.appendChild(input);
+    }
+    else if (ftype === "radio") {
+        var r1 = document.createElement("input");
+        r1.type = "radio"; r1.name = idName; r1.value = "Option 1";
+
+        var r2 = document.createElement("input");
+        r2.type = "radio"; r2.name = idName; r2.value = "Option 2";
+
+        td2.appendChild(r1);
+        td2.appendChild(document.createTextNode(" Option 1 "));
+        td2.appendChild(r2);
+        td2.appendChild(document.createTextNode(" Option 2 "));
+    }
+    else if (ftype === "checkbox") {
+        var c1 = document.createElement("input");
+        c1.type = "checkbox"; c1.name = idName;
+
+        var c2 = document.createElement("input");
+        c2.type = "checkbox"; c2.name = idName;
+
+        td2.appendChild(c1);
+        td2.appendChild(document.createTextNode(" Option 1 "));
+        td2.appendChild(c2);
+        td2.appendChild(document.createTextNode(" Option 2 "));
+    }
+    else if (ftype === "select") {
+        var sel = document.createElement("select");
+        sel.id = idName;
+        sel.name = idName;
+
+        var o1 = document.createElement("option"); o1.value = ""; o1.innerHTML = "-- Select --";
+        var o2 = document.createElement("option"); o2.value = "Option 1"; o2.innerHTML = "Option 1";
+        var o3 = document.createElement("option"); o3.value = "Option 2"; o3.innerHTML = "Option 2";
+
+        sel.appendChild(o1); sel.appendChild(o2); sel.appendChild(o3);
+        td2.appendChild(sel);
+    }
+
+    row.appendChild(td1);
+    row.appendChild(td2);
+    table.appendChild(row);
+    container.appendChild(table);
+
+    fnInput.value = "";
+    fnInput.focus();
+}
+
+function validateForm() {
+    var container = document.getElementById("regContainer");
+    var tables = container.getElementsByTagName("table");
+
+    var i;
+
+    for (i = 0; i < tables.length; i++) {
+        var row = tables[i].rows[0];
+        var label = row.cells[0].innerHTML.replace(":", "");
+        var field = row.cells[1];
+
+        var inputs = field.getElementsByTagName("input");
+
+        if (inputs.length === 1) {
+            var input = inputs[0];
+
+            if (input.type === "text" || input.type === "password" || input.type === "email") {
+                if (input.value === "") {
+                    alert(label + " cannot be empty.");
+                    input.focus();
+                    return false;
+                }
+            }
+
+            if (input.type === "number") {
+                if (input.value === "") {
+                    alert(label + " requires a number.");
+                    input.focus();
+                    return false;
+                }
+            }
+
+            if (input.type === "date") {
+                if (input.value === "") {
+                    alert("Please select a date for " + label);
+                    input.focus();
+                    return false;
+                }
+                var today = new Date();
+                var given = new Date(input.value);
+                if (given > today) {
+                    alert(label + " cannot be a future date.");
+                    return false;
+                }
+            }
+
+            if (input.type === "file") {
+                if (input.value === "") {
+                    alert("Please upload a file for " + label);
+                    return false;
+                }
+            }
+        }
+
+        if (inputs.length > 1 && inputs[0].type === "radio") {
+            if (inputs[0].checked === false && inputs[1].checked === false) {
+                alert("Please select an option for " + label);
+                return false;
+            }
+        }
+
+        if (inputs.length > 1 && inputs[0].type === "checkbox") {
+            if (!inputs[0].checked && !inputs[1].checked) {
+                alert("Please select at least one option for " + label);
+                return false;
+            }
+        }
+
+        var selects = field.getElementsByTagName("select");
+        if (selects.length === 1) {
+            if (selects[0].value === "") {
+                alert("Please select a value for " + label);
+                selects[0].focus();
+                return false;
+            }
+        }
+    }
+
+    showInformation();
+    return false;
+}
+
+function showInformation() {
+    var infoContainer = document.getElementById("infoContainer");
+    infoContainer.innerHTML = "";
+
+    var fs = document.createElement("fieldset");
+    var legend = document.createElement("legend");
+    legend.innerHTML = "Information";
+    fs.appendChild(legend);
+
+    var table = document.createElement("table");
+
+    var container = document.getElementById("regContainer");
+    var tables = container.getElementsByTagName("table");
+
+    var i;
+    for (i = 0; i < tables.length; i++) {
+        var row = tables[i].rows[0];
+        var label = row.cells[0].innerHTML;
+        var field = row.cells[1];
+
+        var value = "";
+        var inputs = field.getElementsByTagName("input");
+        var selects = field.getElementsByTagName("select");
+
+        if (inputs.length === 1) {
+            if (inputs[0].type === "file") {
+                value = inputs[0].value !== "" ? "File selected" : "";
+            } else {
+                value = inputs[0].value;
+            }
+        }
+        else if (inputs.length > 1 && inputs[0].type === "radio") {
+            if (inputs[0].checked) value = "Option 1";
+            else if (inputs[1].checked) value = "Option 2";
+        }
+        else if (inputs.length > 1 && inputs[0].type === "checkbox") {
+            var t = "";
+            if (inputs[0].checked) t = "Option 1";
+            if (inputs[1].checked) t = t === "" ? "Option 2" : t + ", Option 2";
+            value = t;
+        }
+
+        if (selects.length === 1) {
+            value = selects[0].value;
+        }
+
+        var infoRow = document.createElement("tr");
+        var td1 = document.createElement("td");
+        var td2 = document.createElement("td");
+        td1.innerHTML = label;
+        td2.innerHTML = value;
+
+        infoRow.appendChild(td1);
+        infoRow.appendChild(td2);
+        table.appendChild(infoRow);
+    }
+
+    fs.appendChild(table);
+    infoContainer.appendChild(fs);
+}
+</script>
