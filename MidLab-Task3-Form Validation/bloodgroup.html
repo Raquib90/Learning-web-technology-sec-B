@@ -1,0 +1,26 @@
+<html>
+<head>
+<title>Blood Group Form</title>
+</head>
+<body>
+<form method="" action="" onsubmit="return validateBloodGroup()">
+   Blood Group
+   <select name="bloodgroup" id="bloodgroup" onchange="checkBloodGroup()">
+      <option value="">-- Select Blood Group --</option>
+      <option value="A+">A+</option>
+      <option value="A-">A-</option>
+      <option value="AB+">AB+</option>
+      <option value="AB-">AB-</option>
+      <option value="O+">O+</option>
+      <option value="O-">O-</option>
+   </select>
+   <hr>
+   <table>
+      <tr>
+         <td><input type="submit" name="submit" value="submit"></td>
+      </tr>
+   </table>
+</form>
+<script src="bloodgroup.js"></script>
+</body>
+</html>
